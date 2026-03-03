@@ -242,97 +242,12 @@ For a 1-hour technical tutorial:
 - 150+ caption segments with timestamps
 
 **Processing time:** ~25-35 seconds
-
-## 🛠️ Troubleshooting
-
-### LM Studio Connection Error
-
-```
-Error: LM Studio service is not available
-```
-
-**Solution:**
-1. Open LM Studio application
-2. Load the model: `smollm-360m-instruct-v0.2`
-3. Click "Start Local Server"
-4. Verify URL in `.env`: `LM_STUDIO_URL=http://localhost:1234`
-5. Refresh the web page
-
-### Port Already in Use
-
-**Backend (Port 8000):**
-```bash
-lsof -ti:8000 | xargs kill -9
-```
-
-**Frontend (Port 3000):**
-```bash
-lsof -ti:3000 | xargs kill -9
-```
-
-### No Captions Available
-
-Some videos don't have captions. Error will show:
-```
-No captions found for this video
-```
-
-**Solution:** Try a different video with available captions.
-
-### Python Version Issues
-
-Some packages may have issues with Python 3.13. Use Python 3.11 or 3.12:
-
-```bash
-python3.11 -m venv venv
-source venv/bin/activate
-```
-
-### Slow Processing
-
-If analysis takes longer than 60 seconds:
-1. Check LM Studio is responsive
-2. Check system resources (RAM, CPU)
-3. Try a shorter video first
-
-## 🚀 Deployment
-
-For production deployment:
-
-- Cloud deployments require cloud-based LM models instead of local LM Studio
-- Consider AWS Lambda with API Gateway
-- Use Google Cloud Run
-- Try Azure Functions
-- Or use OpenAI/Claude APIs instead of LM Studio
-
-## 📈 Performance Tips
-
-1. **Optimize LM Studio Model**
-   - Use smaller models for faster processing
-   - Larger models give better quality but slower results
-
-2. **Batch Processing**
-   - Process multiple videos in sequence
-   - Avoid concurrent requests
-
-3. **Caching**
-   - Store results in database for repeated queries
-   - Cache frequently accessed videos
-
 ## 🔐 Security Considerations
 
 1. **No API Keys Stored** - All data processed locally
 2. **No Video Downloads** - Only captions and metadata extracted
 3. **CORS Enabled** - For frontend-backend communication
 4. **Rate Limiting** - Recommended for production
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m "Add amazing feature"`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
 
 ## 📝 Development
 
