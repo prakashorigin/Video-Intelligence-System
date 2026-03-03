@@ -118,22 +118,6 @@ npm install
 npm run dev
 ```
 
-### Option 3: Quick Start Scripts
-
-**Terminal 1 - Backend:**
-```bash
-bash quick-start-backend.sh
-```
-
-Wait for: `Uvicorn running on http://0.0.0.0:8000`
-
-**Terminal 2 - Frontend:**
-```bash
-bash quick-start-frontend.sh
-```
-
-Wait for: `Ready in XXXms`
-
 ## ⚙️ Configuration
 
 ### Backend Environment Variables
@@ -156,27 +140,6 @@ Create a `.env.local` file in the `frontend` directory:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
-
-## 🧠 LM Studio Setup
-
-LM Studio provides the AI models for analysis. It's required to run this system.
-
-### Installation Steps:
-
-1. **Download LM Studio**
-   - Visit [lmstudio.ai](https://lmstudio.ai)
-   - Download and install
-
-2. **Download Model**
-   - Open LM Studio
-   - Search for: `smollm-360m-instruct-v0.2`
-   - Click Download
-
-3. **Start Local Server**
-   - Load the model
-   - Click "Start Local Server"
-   - Model will run on port 1234
-   - Wait for: "Server is running on http://localhost:1234"
 
 ## 🔌 API Endpoints
 
