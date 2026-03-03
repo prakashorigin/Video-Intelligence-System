@@ -436,4 +436,4 @@ For issues and questions:
 
 ---
 
-**Made with ❤️ using FastAPI, Next.js, and LM Studio**
+**Made with  using FastAPI, Next.js, and LM Studio**

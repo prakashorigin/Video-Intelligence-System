@@ -15,6 +15,7 @@ from app.models import (
     VideoAnalysisResponse,
     HealthResponse,
     VideoMetadata,
+    CaptionSegment,
 )
 from app.utils.youtube_extractor import YouTubeExtractor
 from app.services.ai_analyzer import AIAnalyzer
@@ -124,44 +125,69 @@ def analyze_video(request: VideoRequest):
         print("Extracting captions...")
         captions = extractor.extract_captions(request.url)
         
-        if not captions:
-            raise HTTPException(
-                status_code=400,
-                detail="No captions found for this video. Please ensure the video has available captions."
-            )
+        has_captions = bool(captions)
 
         # Check if LM Studio is available
-        if not ai_analyzer.is_available():
-            raise HTTPException(
-                status_code=503,
-                detail="LM Studio service is not available. Please ensure LM Studio is running."
-            )
+        lm_available = ai_analyzer.is_available()
+        
+        summary = None
+        key_points = []
+        timestamped_analysis = []
 
-        # Generate AI analysis
-        print("Generating summary...")
-        summary = ai_analyzer.generate_summary(captions, metadata.title)
-        
-        print("Extracting key points...")
-        key_points = ai_analyzer.extract_key_points(captions, metadata.title)
-        
-        print("Generating timestamped analysis...")
-        timestamped_analysis = ai_analyzer.generate_timestamped_analysis(
-            captions,
-            metadata.title,
-            num_segments=5
-        )
+        if has_captions and lm_available:
+            # Full analysis with captions + AI
+            print("Generating summary...")
+            summary = ai_analyzer.generate_summary(captions, metadata.title)
+            
+            print("Extracting key points...")
+            key_points = ai_analyzer.extract_key_points(captions, metadata.title)
+            
+            print("Generating timestamped analysis...")
+            timestamped_analysis = ai_analyzer.generate_timestamped_analysis(
+                captions,
+                metadata.title,
+                num_segments=5
+            )
+        elif has_captions and not lm_available:
+            # Captions available but no LM Studio — provide basic text summary
+            full_text = " ".join([seg.text for seg in captions[:50]])
+            summary = f"[LM Studio not available — raw caption preview] {full_text[:1500]}..."
+        elif not has_captions and lm_available:
+            # No captions but LM Studio available — analyze from description
+            desc = metadata.description or ""
+            if desc:
+                print("No captions found. Generating analysis from video description...")
+                fake_captions = [CaptionSegment(timestamp=0, text=desc[:4000], duration=0)]
+                summary = ai_analyzer.generate_summary(fake_captions, metadata.title)
+                key_points = ai_analyzer.extract_key_points(fake_captions, metadata.title)
+            else:
+                summary = "No captions or description available for AI analysis."
+        else:
+            # No captions, no LM Studio
+            desc = metadata.description or ""
+            summary = f"[No captions found and LM Studio is not running] Video description: {desc[:1500]}" if desc else "No captions or description available."
+
+        # Determine response message
+        if has_captions and lm_available:
+            message = "Video analysis completed successfully"
+        elif has_captions:
+            message = "Partial analysis — LM Studio is not running (captions extracted)"
+        elif lm_available:
+            message = "Analysis from description — no captions available for this video"
+        else:
+            message = "Metadata only — no captions found and LM Studio is not running"
 
         processing_time = time.time() - start_time
 
         return VideoAnalysisResponse(
             success=True,
-            message="Video analysis completed successfully",
+            message=message,
             metadata=metadata,
             summary=summary,
             key_points=key_points,
             timestamped_analysis=timestamped_analysis,
-            captions=captions,
-            total_segments=len(captions),
+            captions=captions if captions else [],
+            total_segments=len(captions) if captions else 0,
             processing_time=round(processing_time, 2),
         )
 

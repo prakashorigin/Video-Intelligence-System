@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { VideoAnalyzer } from "@/components/video-analyzer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,9 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <VideoAnalyzer />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

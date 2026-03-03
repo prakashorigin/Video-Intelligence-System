@@ -1,14 +1,18 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { analyzeVideo } from '@/lib/api';
-import { Play, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { analyzeVideo } from "@/lib/api";
+import { Play, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { VideoResults } from "./video-results";
 
 const VideoAnalysisSchema = z.object({
-  url: z.string().url('Please enter a valid YouTube URL').min(1, 'URL is required'),
+  url: z
+    .string()
+    .url("Please enter a valid YouTube URL")
+    .min(1, "URL is required"),
 });
 
 type VideoAnalysisForm = z.infer<typeof VideoAnalysisSchema>;
@@ -40,7 +44,7 @@ export function VideoAnalyzer() {
 
     try {
       const result = await analyzeVideo(data.url);
-      
+
       if (result.success) {
         setAnalysis({ loading: false, data: result, error: null });
         reset();
@@ -48,11 +52,12 @@ export function VideoAnalyzer() {
         setAnalysis({
           loading: false,
           data: null,
-          error: result.message || 'Analysis failed',
+          error: result.message || "Analysis failed",
         });
       }
     } catch (error: any) {
-      const errorMessage = error.detail || error.message || 'Failed to analyze video';
+      const errorMessage =
+        error.detail || error.message || "Failed to analyze video";
       setAnalysis({ loading: false, data: null, error: errorMessage });
     }
   };
@@ -71,7 +76,8 @@ export function VideoAnalyzer() {
             Video Intelligence System
           </h1>
           <p className="text-lg text-gray-600">
-            Extract captions, summaries, and insights from YouTube videos using AI
+            Extract captions, summaries, and insights from YouTube videos using
+            AI
           </p>
         </div>
 
@@ -79,8 +85,10 @@ export function VideoAnalyzer() {
           {/* Input Section */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Analyze Video</h2>
-              
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Analyze Video
+              </h2>
+
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -89,12 +97,14 @@ export function VideoAnalyzer() {
                   <input
                     type="text"
                     placeholder="https://youtube.com/watch?v=..."
-                    {...register('url')}
+                    {...register("url")}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                     disabled={analysis.loading}
                   />
                   {errors.url && (
-                    <p className="text-red-500 text-sm mt-1">{errors.url.message}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.url.message}
+                    </p>
                   )}
                 </div>
 
@@ -135,7 +145,9 @@ export function VideoAnalyzer() {
               <div className="bg-white rounded-lg shadow-lg p-8 text-center">
                 <div className="text-gray-500">
                   <p className="text-lg font-medium mb-2">No analysis yet</p>
-                  <p className="text-sm">Enter a YouTube URL and click "Analyze Video" to get started</p>
+                  <p className="text-sm">
+                    Enter a YouTube URL and click "Analyze Video" to get started
+                  </p>
                 </div>
               </div>
             )}

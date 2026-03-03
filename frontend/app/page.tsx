@@ -1,3 +1,5 @@
+import { VideoAnalyzer } from "@/components/video-analyzer";
+
 export default function Page() {
-  return null;
+  return <VideoAnalyzer />;
 }
